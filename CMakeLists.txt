@@ -31,7 +31,16 @@ if(DEFINED ASTRELM_CONFIGURED_TRIPLET AND
 endif()
 set(ASTRELM_CONFIGURED_TRIPLET "${ASTRELM_TRIPLET}" CACHE INTERNAL "Selected target")
 
+if(NOT CMAKE_BUILD_TYPE MATCHES "^(AstrelmSize|AstrelmDebug)$")
+    message(FATAL_ERROR "Use AstrelmSize or AstrelmDebug through cmake -P src/build.cmake")
+endif()
+
 project(Astrelm LANGUAGES C CXX ASM)
+foreach(language C CXX ASM)
+    set(CMAKE_${language}_FLAGS_ASTRELMSIZE "-Os -g")
+    set(CMAKE_${language}_FLAGS_ASTRELMDEBUG "-Og -g3 -fno-omit-frame-pointer")
+endforeach()
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -52,6 +61,14 @@ target_link_options(astrelm_build_options INTERFACE
 
 add_subdirectory(src/system)
 add_subdirectory(src/payloads)
+
+add_custom_target(analyze-system ALL
+    COMMAND "${Python3_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/tools/analyze.py"
+        --build-dir "${CMAKE_BINARY_DIR}"
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Analyzing Astrelm system C++"
+    VERBATIM
+)
 
 set(ASTRELM_SYSROOT "${CMAKE_BINARY_DIR}/sysroot")
 set(ASTRELM_IMAGES "${CMAKE_BINARY_DIR}/images")

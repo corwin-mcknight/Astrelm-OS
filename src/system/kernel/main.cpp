@@ -1,8 +1,6 @@
-extern "C" void astrelm_console_putc(char c);
+#include "debug.h"
 
-extern "C" void astrelm_main(void)
+extern "C" void astrelm_main(uintptr_t hart_id)
 {
-    for (const char *c = "Hello, world!\r\n"; *c != '\0'; ++c) {
-        astrelm_console_putc(*c);
-    }
+    (void)debug::line("Astrelm kernel booting; hart=", hart_id);
 }
