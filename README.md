@@ -10,6 +10,8 @@ The first target is **riscv64 / virt / minimal**. Its kernel boots directly in Q
 
 Build requirements and commands are in [BUILDING.md](BUILDING.md).
 
+The longer-term design is documented in [docs/theory/](docs/theory/README.md).
+
 ## Source organization
 
 Implementation lives under `src/`. Target configuration is in `src/config/`, kernel code in `src/system/kernel/`, and each mission package owns its applications and configuration in `src/payloads/<mission>/`.
